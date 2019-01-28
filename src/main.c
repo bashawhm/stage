@@ -21,6 +21,7 @@ typedef enum BuiltinCommand {
     Help
 } BuiltinCommand;
 
+// BackgroundJob is a node in a linked list of jobs
 typedef struct BackgroundJob {
     parseInfo *info;
     unsigned int pid;
@@ -37,6 +38,7 @@ BackgroundJob *makeJob(parseInfo *info, unsigned int pid) {
     return newJob;
 }
 
+// Adds job to linked list
 void addJob(BackgroundJob *jobList, BackgroundJob *newJob) {
     if (jobList -> next == NULL) {
         jobList -> next = newJob;
@@ -46,6 +48,7 @@ void addJob(BackgroundJob *jobList, BackgroundJob *newJob) {
     addJob(jobList -> next, newJob);
 }
 
+// Removed job fron linked list of jobs
 BackgroundJob *removeJob(BackgroundJob *jobList, BackgroundJob *staleJob) {
     if (jobList != NULL) {
         BackgroundJob *job = jobList;
@@ -123,6 +126,7 @@ BuiltinCommand builtIn(char *cmd) {
 char *buildPrompt(void) {
     char buff[MAX_BUFF_SIZE];
     getcwd(buff, MAX_BUFF_SIZE);
+    // Handle coloring
     strncat(buff, "\x1b[36m:> \x1b[0m", MAX_BUFF_SIZE);
     char colorBuff[MAX_BUFF_SIZE] = "\x1b[32m";
     return strncat(colorBuff, buff, MAX_BUFF_SIZE);
@@ -193,6 +197,10 @@ reparse:
             } else {
                 free_info(info);
                 free(cmdLine);
+                //Clears history
+                for (int i = 0; i < HISTORY_SIZE; ++i) {
+                    free(history[i]);
+                }
                 exit(1);
             }
             break;
@@ -203,6 +211,7 @@ reparse:
                     fprintf(stderr, "Failed to change directory\n");
                 }
             } else {
+                // `cd` takes you to your home dir
                 if (chdir(getenv("HOME")) == -1) {
                     fprintf(stderr, "Failed to change directory\n"); 
                 }
@@ -216,6 +225,7 @@ reparse:
             break;
         }
         case Call: {
+            // Calls command in the history
             int num = atoi(cmdLine+1);
             free(cmdLine);
             if (num >= 0) {
@@ -289,6 +299,7 @@ reparse:
                 }
                 exit(execvp(info -> CommArray[0].command, info -> CommArray[0].VarList));
             }
+            //Is parent
             if (info -> boolBackground) {
                 if (jobs == NULL) {
                     jobs = makeJob(info, childPID);
@@ -296,7 +307,6 @@ reparse:
                     addJob(jobs, makeJob(info, childPID));
                 }
             } else {
-                //Is parent
                 int code;
                 while(wait(&code) != childPID);
                 free_info(info);
