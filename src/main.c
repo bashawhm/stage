@@ -208,12 +208,12 @@ reparse:
         case Cd: {
             if (info -> CommArray[0].VarList[1] != NULL) {
                 if (chdir(info -> CommArray[0].VarList[1]) == -1) {
-                    fprintf(stderr, "Failed to change directory\n");
+                    fprintf(stderr, "No such file or directory\n");
                 }
             } else {
                 // `cd` takes you to your home dir
                 if (chdir(getenv("HOME")) == -1) {
-                    fprintf(stderr, "Failed to change directory\n"); 
+                    fprintf(stderr, "No such file or directory\n"); 
                 }
             }
             free_info(info);
@@ -234,6 +234,7 @@ reparse:
                 cmdLine = strdup(history[0]);
             }
             free_info(info);
+            printf("%s\n", cmdLine);
             goto reparse;
         }
         case Jobs: {
