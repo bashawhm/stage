@@ -18,9 +18,7 @@ Stage supports several things...
 
 # Known Bugs
 
-The only known bug is that if you kill a background process and imediatly
-try to exit, the shell will not yet have checked the background process list
-and will still think there are background processes alive.
+None anymore.
 
 # Unknown Bugs
 

@@ -191,6 +191,18 @@ reparse:
         BuiltinCommand cmd = builtIn((info -> CommArray[0].command));
         switch (cmd) {
         case Exit: {
+            //Check the status of background jobs
+            if (jobs != NULL) {
+                BackgroundJob *job = jobs;
+                do {
+                    int status;
+                    if (waitpid(job -> pid, &status, WNOHANG)) {
+                        printf("Process %d has ended\n", status);
+                        jobs = removeJob(jobs, job);
+                    }
+                    job = job -> next;
+                } while (job != NULL);
+            }
             if (jobs != NULL) {
                 printf("There are background processes running\n");
                 free_info(info);
