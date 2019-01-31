@@ -1,6 +1,6 @@
 # Stage: A Unix command shell
 
-Stage is a unix style command shell for my CS444 (Operating Systems) class.
+Stage is a Unix style command shell for my CS444 (Operating Systems) class.
 The parser was provided by Professor Jeanna Matthews. 
 
 # Features
